@@ -2,6 +2,7 @@ import random
 import time
 import pygame
 import sys
+from pathlib import Path, PureWindowsPath
 from pygame.locals import *
 
 FPS = 25
@@ -161,13 +162,15 @@ def main():
     BASICFONT = pygame.font.SysFont('verdana', 18)
     BIGFONT = pygame.font.SysFont('verdana', 100)
     pygame.display.set_caption('Tetris')
+    tetris_music_b = PureWindowsPath("tetris\\src\\tetrisb.mid")
+    tetris_music_c = PureWindowsPath("tetris\\src\\tetrisc.mid")
 
     showTextScreen('Tetris')
     while True:  # game loop
         if random.randint(0, 1) == 0:
-            pygame.mixer.music.load('tetris/src/tetrisb.mid')
+            pygame.mixer.music.load(Path(tetris_music_b).name)
         else:
-            pygame.mixer.music.load('tetris/src/tetrisc.mid')
+            pygame.mixer.music.load(Path(tetris_music_c).name)
         pygame.mixer.music.play(-1, 0.0)
         runGame()
         pygame.mixer.music.stop()
