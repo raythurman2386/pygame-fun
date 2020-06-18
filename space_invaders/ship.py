@@ -2,7 +2,7 @@ import pygame
 from random import choice
 from constants import *
 
-# Ship class to create Player and Enemy Ships
+# Base Ship class to create Player and Enemy Ships
 class Ship:
     def __init__(self, x, y, health=100):
         self.x = x
@@ -13,11 +13,14 @@ class Ship:
         self.lasers = []
         self.cool_down_counter = 0
 
+
     def draw(self, window):
         window.blit(self.ship_img, (self.x, self.y))
 
+
     def get_width(self):
         return self.ship_img.get_width()
+
 
     def get_height(self):
         return self.ship_img.get_height()
@@ -39,6 +42,7 @@ class Enemy(Ship):
         self.laser_img = self.get_laser()
         self.mask = pygame.mask.from_surface(self.ship_img)
         self.max_health = health
+
 
     def get_laser(self):
         if self.ship_img == RED_SPACE_SHIP:
