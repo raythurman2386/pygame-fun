@@ -12,7 +12,7 @@ class Game:
         self.main_font = pygame.font.SysFont("comicsans", 50)
         self.clock = pygame.time.Clock()
         self.player = Player(300, 650)
-        # self.enemy = Enemy(300, 100)
+        self.enemy = Enemy(300, 100)
         self.player_vel = 5
 
     def redraw_window(self):
@@ -25,7 +25,7 @@ class Game:
         WIN.blit(level_label, (WIDTH - level_label.get_width() - 10, 10))
 
         self.player.draw(WIN)
-        # self.enemy.draw(WIN)
+        self.enemy.draw(WIN)
 
         pygame.display.update()
 
