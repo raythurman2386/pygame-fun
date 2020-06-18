@@ -1,8 +1,6 @@
 import pygame
-import os
-import sys
-import random
 from constants import *
+from ship import Player, Enemy
 
 # Game loop
 class Game:
@@ -13,6 +11,9 @@ class Game:
         self.lives = lives
         self.main_font = pygame.font.SysFont("comicsans", 50)
         self.clock = pygame.time.Clock()
+        self.player = Player(300, 650)
+        # self.enemy = Enemy(300, 100)
+        self.player_vel = 5
 
     def redraw_window(self):
         WIN.blit(BACKGROUND, (0, 0))
@@ -22,6 +23,9 @@ class Game:
 
         WIN.blit(lives_label, (10, 10))
         WIN.blit(level_label, (WIDTH - level_label.get_width() - 10, 10))
+
+        self.player.draw(WIN)
+        # self.enemy.draw(WIN)
 
         pygame.display.update()
 
@@ -36,3 +40,13 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.quit_game()
+
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_a] and self.player.x + self.player_vel > 0:  # Left
+                self.player.x -= self.player_vel
+            if keys[pygame.K_d] and self.player.x + self.player_vel + 50 < WIDTH:  # Right
+                self.player.x += self.player_vel
+            if keys[pygame.K_w] and self.player.y + self.player_vel > 0:  # Up
+                self.player.y -= self.player_vel
+            if keys[pygame.K_s] and self.player.y + self.player_vel + 50 < HEIGHT: # Down
+                self.player.y += self.player_vel
