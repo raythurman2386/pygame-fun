@@ -1,7 +1,7 @@
 import pygame
 import random
 from constants import *
-from ship import Player, Enemy
+from ship import Player, Enemy, collide
 
 # Game loop
 
@@ -24,6 +24,8 @@ class Game:
         self.enemies = []
         self.wave_length = 5
         self.enemy_vel = 1
+        # Lasers Velocity
+        self.laser_vel = 5
 
     def redraw_window(self):
         WIN.blit(BACKGROUND, (0, 0))
@@ -67,6 +69,35 @@ class Game:
             self.player.y -= self.player_vel
         if keys[pygame.K_s] and self.player.y + self.player_vel + self.player.get_height() < HEIGHT:  # Down
             self.player.y += self.player_vel
+        if keys[pygame.K_SPACE]:
+            self.player.shoot()
+        if keys[pygame.K_ESCAPE]:
+            self.quit_game()
+
+    def enemy_actions(self):
+        for enemy in self.enemies[:]:
+            enemy.move(self.enemy_vel)
+            enemy.move_lasers(self.laser_vel, self.player)
+
+            if random.randrange(0, 2*60) == 1:
+                enemy.shoot()
+
+            if collide(enemy, self.player):
+                self.player.health -= 10
+                self.enemies.remove(enemy)
+
+            if enemy.y + enemy.get_height() > HEIGHT:
+                self.lives -= 1
+                self.enemies.remove(enemy)
+
+    def generate_enemies(self):
+        if len(self.enemies) == 0:
+            self.level += 1
+            self.wave_length += 5
+            for i in range(self.wave_length):
+                enemy = Enemy(random.randrange(50, WIDTH-50),
+                              random.randrange(-1500, -100))
+                self.enemies.append(enemy)
 
     def play(self):
         while self.run:
@@ -83,19 +114,9 @@ class Game:
                 else:
                     continue
 
-            if len(self.enemies) == 0:
-                self.level += 1
-                self.wave_length += 5
-                for i in range(self.wave_length):
-                    enemy = Enemy(random.randrange(50, WIDTH-50),
-                                  random.randrange(-1500, -100))
-                    self.enemies.append(enemy)
-
+            self.generate_enemies()
             self.check_quit()
             keys = pygame.key.get_pressed()
             self.check_key_press(keys)
-            for enemy in self.enemies[:]:
-                enemy.move(self.enemy_vel)
-                if enemy.y + enemy.get_height() > HEIGHT:
-                    self.lives -= 1
-                    self.enemies.remove(enemy)
+            self.enemy_actions()
+            self.player.move_lasers(-self.laser_vel, self.enemies)
