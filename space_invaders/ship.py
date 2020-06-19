@@ -2,9 +2,8 @@ import pygame
 from random import choice
 from constants import *
 
+
 # Base Ship class to create Player and Enemy Ships
-
-
 class Ship:
     def __init__(self, x, y, health=100):
         self.x = x

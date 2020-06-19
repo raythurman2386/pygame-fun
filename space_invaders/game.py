@@ -3,9 +3,8 @@ import random
 from constants import *
 from ship import Player, Enemy, collide
 
+
 # Game loop
-
-
 class Game:
     def __init__(self, run=True, FPS=60, level=0, lives=5):
         # Minor game Setup items
@@ -52,13 +51,24 @@ class Game:
         # updated the game display
         pygame.display.update()
 
-    def quit_game(self):
-        self.run = False
+    def check_lives(self):
+        if self.lives <= 0 or self.player.health <= 0:
+            self.lost = True
+            self.loss_count += 1
 
-    def check_quit(self):
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                self.quit_game()
+    def check_loss(self):
+        if self.lost:
+            if self.loss_count > self.FPS * 3:
+                self.run = False
+
+    def generate_enemies(self):
+        if len(self.enemies) == 0:
+            self.level += 1
+            self.wave_length += 5
+            for i in range(self.wave_length):
+                enemy = Enemy(random.randrange(50, WIDTH-50),
+                              random.randrange(-1500, -100))
+                self.enemies.append(enemy)
 
     def check_key_press(self, keys):
         if keys[pygame.K_a] and self.player.x + self.player_vel > 0:  # Left
@@ -90,33 +100,29 @@ class Game:
                 self.lives -= 1
                 self.enemies.remove(enemy)
 
-    def generate_enemies(self):
-        if len(self.enemies) == 0:
-            self.level += 1
-            self.wave_length += 5
-            for i in range(self.wave_length):
-                enemy = Enemy(random.randrange(50, WIDTH-50),
-                              random.randrange(-1500, -100))
-                self.enemies.append(enemy)
+    def check_quit(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.quit_game()
+
+    def quit_game(self):
+        self.run = False
 
     def play(self):
         while self.run:
             self.clock.tick(self.FPS)
             self.redraw_window()
-
-            if self.lives <= 0 or self.player.health <= 0:
-                self.lost = True
-                self.loss_count += 1
-
-            if self.lost:
-                if self.loss_count > self.FPS * 3:
-                    self.run = False
-                else:
-                    continue
-
+            # Check to see if lives are 0 or player health 0
+            self.check_lives()
+            # Check for a loss in the game
+            self.check_loss()
+            # Generate the enemies for the level
             self.generate_enemies()
+            # Check to see if the user quit with the X
             self.check_quit()
+            # Watch for key presses and do something depending on the key
             keys = pygame.key.get_pressed()
             self.check_key_press(keys)
+            # Actions for enemy movement and firing
             self.enemy_actions()
             self.player.move_lasers(-self.laser_vel, self.enemies)
