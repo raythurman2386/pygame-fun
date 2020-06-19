@@ -5,15 +5,20 @@ from ship import Player, Enemy
 # Game loop
 class Game:
     def __init__(self, run=True, FPS=60, level=1, lives=5):
+        # Minor game Setup items
         self.run = run
         self.FPS = FPS
         self.level = level
         self.lives = lives
         self.main_font = pygame.font.SysFont("comicsans", 50)
         self.clock = pygame.time.Clock()
+        # Player items
         self.player = Player(300, 650)
-        self.enemy = Enemy(300, 100)
         self.player_vel = 5
+        # Enemy Items
+        self.enemies = []
+        self.wave_length = 5
+        self.enemy_vel = 1
 
 
     def redraw_window(self):
@@ -27,9 +32,11 @@ class Game:
         WIN.blit(level_label, (WIDTH - level_label.get_width() - 10, 10))
 
         # Draw the Ships
+        for enemy in self.enemies:
+            enemy.draw(WIN)
         self.player.draw(WIN)
-        self.enemy.draw(WIN)
 
+        # updated the game display
         pygame.display.update()
 
 
@@ -57,7 +64,12 @@ class Game:
     def play(self):
         while self.run:
             self.clock.tick(self.FPS)
-            self.redraw_window()
+
+            if len(self.enemies) == 0:
+                self.level += 1
+                self.wave_length += 5
+
             self.check_quit()
             keys = pygame.key.get_pressed()
             self.check_key_press(keys)
+            self.redraw_window()

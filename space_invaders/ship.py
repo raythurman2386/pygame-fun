@@ -38,12 +38,14 @@ class Player(Ship):
 class Enemy(Ship):
     def __init__(self, x, y, health=100):
         super().__init__(x, y, health)
+        # Randomly picks an enemy ship color on instantiation
         self.ship_img = choice([RED_SPACE_SHIP, GREEN_SPACE_SHIP, BLUE_SPACE_SHIP])
         self.laser_img = self.get_laser()
         self.mask = pygame.mask.from_surface(self.ship_img)
         self.max_health = health
 
 
+    # Matches the laser color to the randomly chosen enemy
     def get_laser(self):
         if self.ship_img == RED_SPACE_SHIP:
             self.laser_img = RED_LASER
@@ -51,3 +53,7 @@ class Enemy(Ship):
             self.laser_img = GREEN_LASER
         elif self.ship_img == BLUE_SPACE_SHIP:
             self.laser_img = BLUE_LASER
+
+
+    def move(self, vel):
+        self.y += vel
