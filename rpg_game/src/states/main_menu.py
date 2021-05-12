@@ -7,8 +7,7 @@ from .. import setup, tools, tilerender
 # TODO: observer.py
 from .. import observer
 from .. import constants as c
-# TODO: death.py
-import death
+import src.states.death
 
 
 class Menu(tools._State):
